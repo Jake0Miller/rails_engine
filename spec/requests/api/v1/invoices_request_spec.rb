@@ -15,7 +15,7 @@ describe 'Invoices API' do
 
     invoices = JSON.parse(response.body)["data"]
 
-    expect(invoices.count).to eq(3)
+    expect(invoices.length).to eq(3)
   end
 
   it 'can get one invoice by its id' do
