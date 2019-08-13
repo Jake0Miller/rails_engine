@@ -6,10 +6,11 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-3.times do
-  Merchant.create!(name: Faker::Company.unique.name)
-end
-
-3.times do
-  Customer.create!(first_name: Faker::Name.unique.name)
-end
+# 3.times do
+#   Merchant.create!(name: Faker::Company.unique.name)
+# end
+#
+# 3.times do
+#   name = Faker::Name.unique.name
+#   Customer.create!(first_name: name[0], last_name: name[1])
+# end
