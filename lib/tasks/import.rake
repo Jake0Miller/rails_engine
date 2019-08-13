@@ -8,33 +8,45 @@ task :import => [:environment] do
   merchant_file = "db/csv/merchants.csv"
   transaction_file = "db/csv/transactions.csv"
 
+  customers = []
   CSV.foreach(customer_file, :headers => true) do |row|
-    Customer.create!(row.to_hash)
+    customers << row.to_hash
   end
+  Customer.import(customers)
   p "Customers imported"
 
+  merchants = []
   CSV.foreach(merchant_file, :headers => true) do |row|
-    Merchant.create!(row.to_hash)
+    merchants << row.to_hash
   end
+  Merchant.import!(merchants)
   p "Merchants imported"
 
+  invoices = []
   CSV.foreach(invoice_file, :headers => true) do |row|
-    Invoice.create!(row.to_hash)
+    invoices << row.to_hash
   end
+  Invoice.import!(invoices)
   p "Invoices imported"
 
+  items = []
   CSV.foreach(item_file, :headers => true) do |row|
-    Item.create!(row.to_hash)
+    items << row.to_hash
   end
+  Item.import!(items)
   p "Items imported"
 
+  invoice_items = []
   CSV.foreach(invoice_item_file, :headers => true) do |row|
-    InvoiceItem.create!(row.to_hash)
+    invoice_items << row.to_hash
   end
+  InvoiceItem.import!(invoice_items)
   p "Invoice items imported"
 
+  transactions = []
   CSV.foreach(transaction_file, :headers => true) do |row|
-    Transaction.create!(row.to_hash)
+    transactions << row.to_hash
   end
+  Transaction.import!(transactions)
   p "Transactions imported"
 end
