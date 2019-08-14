@@ -9,7 +9,7 @@ class Item < ApplicationRecord
   scope(:order_by_id, -> { order(id: :asc) })
 
   def self.most_sold(num)
-    self.joins(:invoice_items)
+    joins(:invoice_items)
         .select('items.*, sum(invoice_items.quantity) AS qty')
         .group('items.id')
         .order('qty DESC')
@@ -17,7 +17,7 @@ class Item < ApplicationRecord
   end
 
   def self.date_of_highset_sales(item_id)
-    self.joins(:invoices)
+    joins(:invoices)
         .where(items: {id: item_id})
         .select('items.id, items.name, sum(invoice_items.quantity) AS qty, invoices.created_at::date AS best_day')
         .group(:best_day)
@@ -25,6 +25,11 @@ class Item < ApplicationRecord
         .order(qty: :DESC)
         .order(best_day: :DESC)
         .limit(1)
+  end
+
+  def self.items_on_invoice(inv_id)
+    joins(:invoices)
+      .where(invoices: {id: inv_id})
   end
 
   private
