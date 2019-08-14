@@ -1,4 +1,4 @@
 class DateSerializer
   include FastJsonapi::ObjectSerializer
-  attributes :id, :day, :name, :qty
+  attributes :id, :best_day, :name, :qty
 end

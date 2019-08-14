@@ -1,11 +1,11 @@
 class Api::V1::Items::SearchController < ApplicationController
   def show
-    item = Item.where(item_params).first
+    item = Item.order_by_id.find_by(item_params)
     render json: ItemSerializer.new(item)
   end
 
   def index
-    items = Item.where(item_params).order(id: :asc)
+    items = Item.order_by_id.where(item_params)
     render json: ItemSerializer.new(items)
   end
 
