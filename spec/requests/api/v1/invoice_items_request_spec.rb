@@ -60,7 +60,7 @@ describe 'Invoice_items API' do
       invoice_item = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(invoice_item["id"].to_i).to eq(@invoice_item_2.id)
+      expect(invoice_item["id"].to_i).to eq(@invoice_item_1.id)
 
       get "/api/v1/invoice_items/find?item_id=#{@invoice_item_2.item_id}"
 
