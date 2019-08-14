@@ -12,7 +12,7 @@ task :import => [:environment] do
   CSV.foreach(customer_file, :headers => true) do |row|
     customers << row.to_hash
   end
-  Customer.import(customers)
+  Customer.import!(customers)
   p "Customers imported"
 
   merchants = []
@@ -31,6 +31,7 @@ task :import => [:environment] do
 
   items = []
   CSV.foreach(item_file, :headers => true) do |row|
+    row["unit_price"] = (row["unit_price"].to_f/100).to_s
     items << row.to_hash
   end
   Item.import!(items)

@@ -25,9 +25,34 @@ describe 'Merchants API' do
   end
 
   it 'can get find one merchant by search params' do
-    josh = Merchant.create!(name: 'Josh')
+    alex = Merchant.create!(name: 'Alex', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
+    josh = Merchant.create!(name: 'Josh', created_at: "2012-03-26 09:54:09 UTC", updated_at: "2012-03-26 09:54:09 UTC")
 
-    get "/api/v1/merchants/find?name=josh"
+    get "/api/v1/merchants/find?id=#{josh.id}"
+
+    merchant = JSON.parse(response.body)["data"]
+
+    expect(response).to be_successful
+    expect(merchant["id"].to_i).to eq(josh.id)
+    expect(merchant["attributes"]["name"]).to eq(josh.name)
+
+    get "/api/v1/merchants/find?name=Josh"
+
+    merchant = JSON.parse(response.body)["data"]
+
+    expect(response).to be_successful
+    expect(merchant["id"].to_i).to eq(josh.id)
+    expect(merchant["attributes"]["name"]).to eq(josh.name)
+
+    get "/api/v1/merchants/find?created_at=#{josh.created_at}"
+
+    merchant = JSON.parse(response.body)["data"]
+
+    expect(response).to be_successful
+    expect(merchant["id"].to_i).to eq(josh.id)
+    expect(merchant["attributes"]["name"]).to eq(josh.name)
+
+    get "/api/v1/merchants/find?updated_at=#{josh.updated_at}"
 
     merchant = JSON.parse(response.body)["data"]
 
@@ -40,7 +65,7 @@ describe 'Merchants API' do
     josh_1 = Merchant.create!(name: 'Josh')
     josh_2 = Merchant.create!(name: 'Josh')
 
-    get "/api/v1/merchants/find_all?name=josh"
+    get "/api/v1/merchants/find_all?name=Josh"
 
     merchants = JSON.parse(response.body)["data"]
 
