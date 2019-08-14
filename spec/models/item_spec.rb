@@ -53,5 +53,9 @@ RSpec.describe Item, type: :model do
     it '.items_on_invoice' do
       expect(Item.items_on_invoice(@invoice_1.id).length).to eq(5)
     end
+
+    it '.item_on_invoice_item' do
+      expect(Item.item_on_invoice_item(@invoice_item_1.id)[0].id).to eq(@item_1.id)
+    end
   end
 end

@@ -55,5 +55,9 @@ RSpec.describe Invoice, type: :model do
       expect(top_5[3]).to eq(@invoice_5)
       expect(top_5[4]).to eq(@invoice_3)
     end
+
+    it '.invoice_on_invoice_item' do
+      expect(Invoice.invoice_on_invoice_item(@invoice_item_1.id)[0].id).to eq(@invoice_1.id)
+    end
   end
 end
