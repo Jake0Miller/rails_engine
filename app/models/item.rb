@@ -18,12 +18,12 @@ class Item < ApplicationRecord
 
   def self.date_of_highset_sales(item_id)
     self.joins(:invoices)
-        .where("items.id = #{item_id}")
-        .select("items.id, items.name, sum(invoice_items.quantity) AS qty, invoices.created_at::date AS best_day")
-        .group('best_day')
-        .group('items.id')
-        .order('qty DESC')
-        .order('best_day DESC')
+        .where(items: {id: item_id})
+        .select('items.id, items.name, sum(invoice_items.quantity) AS qty, invoices.created_at::date AS best_day')
+        .group(:best_day)
+        .group(:id)
+        .order(qty: :DESC)
+        .order(best_day: :DESC)
         .limit(1)
   end
 
