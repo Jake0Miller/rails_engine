@@ -47,7 +47,7 @@ RSpec.describe Item, type: :model do
       expect(top_item.id).to eq(@item_4.id)
       expect(top_item.name).to eq(@item_4.name)
       expect(top_item.qty).to eq(@invoice_item_4.quantity)
-      expect(top_item.day.strftime).to eq(@invoice_1.created_at.strftime("%Y-%m-%d"))
+      expect(top_item.best_day.strftime).to eq(@invoice_1.created_at.strftime("%Y-%m-%d"))
     end
   end
 end
