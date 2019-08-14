@@ -13,3 +13,5 @@ class Merchant < ApplicationRecord
       .where(items: {id: inv_id})
   end
 end
+
+# "2012-03-27".to_date.all_day

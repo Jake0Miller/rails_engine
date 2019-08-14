@@ -24,6 +24,21 @@ describe 'Customers API' do
     expect(transaction["id"].to_i).to eq(id)
   end
 
+  it 'can get the invoice for the transaction' do
+    transaction = create(:transaction)
+    invoice_1 = create(:invoice)
+    invoice_2 = create(:invoice)
+    transaction.update_attributes(invoice_id: invoice_2.id)
+
+    get "/api/v1/transactions/#{transaction.id}/invoice"
+
+    expect(response).to be_successful
+
+    invoice = JSON.parse(response.body)["data"]
+
+    expect(invoice["id"].to_i).to eq(invoice_2.id)
+  end
+
   describe 'lookups' do
     before :each do
       @invoice = create(:invoice)

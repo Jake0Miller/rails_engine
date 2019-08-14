@@ -20,4 +20,9 @@ class Invoice < ApplicationRecord
     joins(:invoice_items)
       .where(invoice_items: {id: inv_id})
   end
+
+  def self.invoice_on_transaction(inv_id)
+    joins(:transactions)
+      .where(transactions: {id: inv_id})
+  end
 end
