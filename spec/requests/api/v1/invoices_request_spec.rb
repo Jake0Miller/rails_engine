@@ -31,58 +31,57 @@ describe 'Invoices API' do
 
   describe 'lookups' do
     before :each do
-      @invoice = create(:invoice)
+      @merchant = Merchant.create(name: 'Bob')
+      @customer = Customer.create(first_name: 'Bob', last_name: 'Saget')
+      @invoice_1 = Invoice.create(merchant: @merchant, customer: @customer, status: 'shipped', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
+      @invoice_2 = Invoice.create(merchant: @merchant, customer: @customer, status: 'unshipped', created_at: "2013-03-25 09:54:09 UTC", updated_at: "2013-03-25 09:54:09 UTC")
     end
 
     it 'can get find one invoice by search params' do
-      get "/api/v1/invoices/find?id=#{@trans_1.id}"
+      get "/api/v1/invoices/find?id=#{@invoice_2.id}"
 
       invoice = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(invoice["id"].to_i).to eq(@trans_1.id)
-      expect(invoice["attributes"]["credit_card_number"]).to eq(@trans_1.credit_card_number)
-      expect(invoice["attributes"]["result"]).to eq(@trans_1.result)
+      expect(invoice["id"].to_i).to eq(@invoice_2.id)
+      expect(invoice["attributes"]["status"]).to eq(@invoice_2.status)
 
-      get "/api/v1/invoices/find?credit_card_number=#{@trans_1.credit_card_number}"
-
-      invoice = JSON.parse(response.body)["data"]
-
-      expect(response).to be_successful
-      expect(invoice["id"].to_i).to eq(@trans_1.id)
-      expect(invoice["attributes"]["credit_card_number"]).to eq(@trans_1.credit_card_number)
-      expect(invoice["attributes"]["result"]).to eq(@trans_1.result)
-
-      get "/api/v1/invoices/find?created_at=#{@trans_2.created_at}"
+      get "/api/v1/invoices/find?status=#{@invoice_2.status}"
 
       invoice = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(invoice["id"].to_i).to eq(@trans_2.id)
-      expect(invoice["attributes"]["credit_card_number"]).to eq(@trans_2.credit_card_number)
-      expect(invoice["attributes"]["result"]).to eq(@trans_2.result)
+      expect(invoice["id"].to_i).to eq(@invoice_2.id)
+      expect(invoice["attributes"]["status"]).to eq(@invoice_2.status)
 
-      get "/api/v1/invoices/find?updated_at=#{@trans_2.updated_at}"
+      get "/api/v1/invoices/find?created_at=#{@invoice_2.created_at}"
 
       invoice = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(invoice["id"].to_i).to eq(@trans_2.id)
-      expect(invoice["attributes"]["credit_card_number"]).to eq(@trans_2.credit_card_number)
-      expect(invoice["attributes"]["result"]).to eq(@trans_2.result)
+      expect(invoice["id"].to_i).to eq(@invoice_2.id)
+      expect(invoice["attributes"]["status"]).to eq(@invoice_2.status)
+
+      get "/api/v1/invoices/find?updated_at=#{@invoice_2.updated_at}"
+
+      invoice = JSON.parse(response.body)["data"]
+
+      expect(response).to be_successful
+      expect(invoice["id"].to_i).to eq(@invoice_2.id)
+      expect(invoice["attributes"]["status"]).to eq(@invoice_2.status)
     end
 
     it 'can get find multiple invoices by search params' do
-      get "/api/v1/invoices/find_all?name=#{@trans_1.created_at}"
+      get "/api/v1/invoices/find_all?name=#{@invoice_2.merchant_id}"
 
       invoices = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
       expect(invoices.length).to eq(2)
-      expect(invoices[1]["id"].to_i).to eq(@trans_1.id)
-      expect(invoices[1]["attributes"]["credit_card_number"]).to eq(@trans_1.credit_card_number)
-      expect(invoices[0]["id"].to_i).to eq(@trans_2.id)
-      expect(invoices[0]["attributes"]["credit_card_number"]).to eq(@trans_2.credit_card_number)
+      expect(invoices[0]["id"].to_i).to eq(@invoice_1.id)
+      expect(invoices[0]["attributes"]["status"]).to eq(@invoice_1.status)
+      expect(invoices[1]["id"].to_i).to eq(@invoice_2.id)
+      expect(invoices[1]["attributes"]["status"]).to eq(@invoice_2.status)
     end
 
     it 'can get a random invoice' do
@@ -91,8 +90,8 @@ describe 'Invoices API' do
       invoice = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect([@trans_1.id, @trans_2.id]).to include(invoice["id"].to_i)
-      expect([@trans_1.credit_card_number, @trans_2.credit_card_number]).to include(invoice["attributes"]["credit_card_number"])
+      expect([@invoice_1.id, @invoice_2.id]).to include(invoice["id"].to_i)
+      expect([@invoice_1.status, @invoice_2.status]).to include(invoice["attributes"]["status"])
     end
   end
 end
