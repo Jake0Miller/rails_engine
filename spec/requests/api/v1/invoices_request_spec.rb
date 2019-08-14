@@ -24,6 +24,38 @@ describe 'Invoices API' do
     expect(invoice["id"].to_i).to eq(id)
   end
 
+  it 'can get a list of transactions for the invoice' do
+    inv_id = create(:invoice).id
+    transactions = create_list(:transaction, 3)
+    transactions.each {|transaction| transaction.update_attributes(invoice_id: inv_id)}
+    create(:transaction)
+
+    get "/api/v1/invoices/#{inv_id}/transactions"
+
+    expect(response).to be_successful
+
+    transactions = JSON.parse(response.body)["data"]
+
+    expect(transactions.length).to eq(3)
+    expect(Transaction.all.length).to eq(4)
+  end
+
+  it 'can get a list of invoice items for the invoice' do
+    inv_id = create(:invoice).id
+    inv_items = create_list(:invoice_item, 3)
+    inv_items.each {|inv_item| inv_item.update_attributes(invoice_id: inv_id)}
+    create(:invoice_item)
+
+    get "/api/v1/invoices/#{inv_id}/invoice_items"
+
+    expect(response).to be_successful
+
+    invoice_items = JSON.parse(response.body)["data"]
+
+    expect(invoice_items.length).to eq(3)
+    expect(InvoiceItem.all.length).to eq(4)
+  end
+
   describe 'lookups' do
     before :each do
       @merchant = Merchant.create(name: 'Bob')
