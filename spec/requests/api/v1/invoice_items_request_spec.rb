@@ -27,9 +27,10 @@ describe 'Invoice_items API' do
   describe 'lookups' do
     before :each do
       @invoice = create(:invoice)
-      @item = create(:item)
-      @invoice_item_1 = InvoiceItem.create(invoice: @invoice, item: @item, status: 'shipped', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
-      @invoice_item_2 = InvoiceItem.create(invoice: @invoice, item: @item, status: 'unshipped', created_at: "2013-03-25 09:54:09 UTC", updated_at: "2013-03-25 09:54:09 UTC")
+      @item_1 = create(:item)
+      @item_2 = create(:item)
+      @invoice_item_1 = InvoiceItem.create!(invoice: @invoice, item: @item_1, quantity: 5, unit_price: 500, created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
+      @invoice_item_2 = InvoiceItem.create!(invoice: @invoice, item: @item_2, quantity: 4, unit_price: 600, created_at: "2013-03-25 09:54:09 UTC", updated_at: "2013-03-25 09:54:09 UTC")
     end
 
     it 'can get find one invoice_item by search params' do
@@ -39,15 +40,34 @@ describe 'Invoice_items API' do
 
       expect(response).to be_successful
       expect(invoice_item["id"].to_i).to eq(@invoice_item_2.id)
-      expect(invoice_item["attributes"]["status"]).to eq(@invoice_item_2.status)
 
-      get "/api/v1/invoice_items/find?status=#{@invoice_item_2.status}"
+      get "/api/v1/invoice_items/find?quantity=#{@invoice_item_2.quantity}"
 
       invoice_item = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
       expect(invoice_item["id"].to_i).to eq(@invoice_item_2.id)
-      expect(invoice_item["attributes"]["status"]).to eq(@invoice_item_2.status)
+
+      get "/api/v1/invoice_items/find?unit_price=#{@invoice_item_2.unit_price}"
+
+      invoice_item = JSON.parse(response.body)["data"]
+
+      expect(response).to be_successful
+      expect(invoice_item["id"].to_i).to eq(@invoice_item_2.id)
+
+      get "/api/v1/invoice_items/find?invoice_id=#{@invoice_item_2.invoice_id}"
+
+      invoice_item = JSON.parse(response.body)["data"]
+
+      expect(response).to be_successful
+      expect(invoice_item["id"].to_i).to eq(@invoice_item_2.id)
+
+      get "/api/v1/invoice_items/find?item_id=#{@invoice_item_2.item_id}"
+
+      invoice_item = JSON.parse(response.body)["data"]
+
+      expect(response).to be_successful
+      expect(invoice_item["id"].to_i).to eq(@invoice_item_2.id)
 
       get "/api/v1/invoice_items/find?created_at=#{@invoice_item_2.created_at}"
 
@@ -55,7 +75,6 @@ describe 'Invoice_items API' do
 
       expect(response).to be_successful
       expect(invoice_item["id"].to_i).to eq(@invoice_item_2.id)
-      expect(invoice_item["attributes"]["status"]).to eq(@invoice_item_2.status)
 
       get "/api/v1/invoice_items/find?updated_at=#{@invoice_item_2.updated_at}"
 
@@ -63,20 +82,17 @@ describe 'Invoice_items API' do
 
       expect(response).to be_successful
       expect(invoice_item["id"].to_i).to eq(@invoice_item_2.id)
-      expect(invoice_item["attributes"]["status"]).to eq(@invoice_item_2.status)
     end
 
     it 'can get find multiple invoice_items by search params' do
-      get "/api/v1/invoice_items/find_all?name=#{@invoice_item_2.merchant_id}"
+      get "/api/v1/invoice_items/find_all?name=#{@invoice_item_2.item_id}"
 
       invoice_items = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
       expect(invoice_items.length).to eq(2)
       expect(invoice_items[0]["id"].to_i).to eq(@invoice_item_1.id)
-      expect(invoice_items[0]["attributes"]["status"]).to eq(@invoice_item_1.status)
       expect(invoice_items[1]["id"].to_i).to eq(@invoice_item_2.id)
-      expect(invoice_items[1]["attributes"]["status"]).to eq(@invoice_item_2.status)
     end
 
     it 'can get a random invoice_item' do
@@ -86,7 +102,6 @@ describe 'Invoice_items API' do
 
       expect(response).to be_successful
       expect([@invoice_item_1.id, @invoice_item_2.id]).to include(invoice_item["id"].to_i)
-      expect([@invoice_item_1.status, @invoice_item_2.status]).to include(invoice_item["attributes"]["status"])
     end
   end
 end
