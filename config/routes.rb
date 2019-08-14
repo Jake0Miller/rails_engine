@@ -12,10 +12,10 @@ Rails.application.routes.draw do
         get '/find', to: 'search#show'
         get '/find_all', to: 'search#index'
         get '/random', to: 'random#show'
-        get '/:id/customer', to: 'customer#index'
+        get '/:id/customer', to: 'customer#show'
         get '/:id/invoice_items', to: 'invoice_items#index'
         get '/:id/items', to: 'items#index'
-        get '/:id/merchant', to: 'merchant#index'
+        get '/:id/merchant', to: 'merchant#show'
         get '/:id/transactions', to: 'transactions#index'
       end
 
@@ -23,6 +23,8 @@ Rails.application.routes.draw do
         get '/find', to: 'search#show'
         get '/find_all', to: 'search#index'
         get '/random', to: 'random#show'
+        get '/:id/invoice', to: 'invoice#show'
+        get '/:id/item', to: 'item#show'
       end
 
       namespace :items do

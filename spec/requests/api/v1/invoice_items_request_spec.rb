@@ -24,6 +24,36 @@ describe 'Invoice_items API' do
     expect(invoice_item["id"].to_i).to eq(id)
   end
 
+  it 'can get the item for the invoice item' do
+    invoice_item = create(:invoice_item)
+    item_1 = create(:item)
+    item_2 = create(:item)
+    invoice_item.update_attributes(item_id: item_2.id)
+
+    get "/api/v1/invoice_items/#{invoice_item.id}/item"
+
+    expect(response).to be_successful
+
+    item = JSON.parse(response.body)["data"]
+
+    expect(item["id"].to_i).to eq(item_2.id)
+  end
+
+  it 'can get the invoice for the invoice item' do
+    invoice_item = create(:invoice_item)
+    invoice_1 = create(:invoice)
+    invoice_2 = create(:invoice)
+    invoice_item.update_attributes(invoice_id: invoice_2.id)
+
+    get "/api/v1/invoice_items/#{invoice_item.id}/invoice"
+
+    expect(response).to be_successful
+
+    invoice = JSON.parse(response.body)["data"]
+
+    expect(invoice["id"].to_i).to eq(invoice_2.id)
+  end
+
   describe 'lookups' do
     before :each do
       @invoice = create(:invoice)

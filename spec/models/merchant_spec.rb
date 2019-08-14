@@ -14,8 +14,6 @@ RSpec.describe Merchant do
     before :each do
       @josh = Merchant.create!(name: 'Josh')
       @alex = Merchant.create!(name: 'Alex')
-      @invoice = create(:invoice)
-      @invoice.update_attributes(merchant_id: @josh.id)
     end
 
     it '.random' do
@@ -26,8 +24,10 @@ RSpec.describe Merchant do
     end
 
     it '.merchant_on_invoice' do
-      expect(Merchant.merchant_on_invoice(@invoice.id)[0].name).to eq(@josh.name)
-      expect(Merchant.merchant_on_invoice(@invoice.id)[0].id).to eq(@josh.id)
+      invoice = create(:invoice)
+      invoice.update_attributes(merchant_id: @josh.id)
+      expect(Merchant.merchant_on_invoice(invoice.id)[0].name).to eq(@josh.name)
+      expect(Merchant.merchant_on_invoice(invoice.id)[0].id).to eq(@josh.id)
     end
   end
 end

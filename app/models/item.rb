@@ -32,6 +32,11 @@ class Item < ApplicationRecord
       .where(invoices: {id: inv_id})
   end
 
+  def self.item_on_invoice_item(inv_id)
+    joins(:invoice_items)
+      .where(invoice_items: {id: inv_id})
+  end
+
   private
 
   def convert_price_string

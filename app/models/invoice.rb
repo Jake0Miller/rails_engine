@@ -15,4 +15,9 @@ class Invoice < ApplicationRecord
       .order(total: dir)
       .limit(limit)
   end
+
+  def self.invoice_on_invoice_item(inv_id)
+    joins(:invoice_items)
+      .where(invoice_items: {id: inv_id})
+  end
 end
