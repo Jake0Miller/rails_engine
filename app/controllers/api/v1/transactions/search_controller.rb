@@ -1,17 +1,17 @@
 class Api::V1::Transactions::SearchController < ApplicationController
   def show
-    item = Transaction.find_by(item_params)
-    render json: TransactionSerializer.new(item)
+    transaction = Transaction.find_by(transaction_params)
+    render json: TransactionSerializer.new(transaction)
   end
 
   def index
-    items = Transaction.where(item_params)
-    render json: TransactionSerializer.new(items)
+    transactions = Transaction.where(transaction_params).order(id: :asc)
+    render json: TransactionSerializer.new(transactions)
   end
 
   private
 
-  def item_params
-    params.permit(:id, :first_name, :last_name, :created_at, :updated_at, :merchant_id)
+  def transaction_params
+    params.permit(:id, :credit_card_number, :result, :created_at, :updated_at, :invoice_id)
   end
 end
