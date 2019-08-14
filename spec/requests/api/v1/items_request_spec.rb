@@ -131,7 +131,7 @@ describe 'Items API' do
   describe 'business intel' do
     before :each do
       @merchant = create(:merchant)
-      @customer = Customer.create!(first_name: 'Bob', last_name: 'Saget')
+      @customer = create(:customer)
       @item_1 = @merchant.items.create!(name: 'Banana', description: 'Yellow', unit_price: '100')
       @item_2 = @merchant.items.create!(name: 'Apple', description: 'Red', unit_price: '150')
       @item_3 = @merchant.items.create!(name: 'Orange', description: 'Orange', unit_price: '160')
@@ -166,7 +166,7 @@ describe 'Items API' do
       expect(top_item["id"].to_i).to eq(@item_4.id)
       expect(top_item["attributes"]["name"]).to eq(@item_4.name)
       expect(top_item["attributes"]["qty"]).to eq(@invoice_item_4.quantity)
-      expect(top_item["attributes"]["day"]).to eq(@invoice_1.created_at.strftime("%Y-%m-%d"))
+      expect(top_item["attributes"]["best_day"]).to eq(@invoice_1.created_at.strftime("%Y-%m-%d"))
     end
   end
 end
