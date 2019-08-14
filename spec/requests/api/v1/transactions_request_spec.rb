@@ -26,68 +26,60 @@ describe 'Customers API' do
 
   describe 'lookups' do
     before :each do
-      @bob = Customer.create!(first_name: 'Bob', last_name: 'Saget', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
-      @rob = Customer.create!(first_name: 'Rob', last_name: 'Savage', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
+      @invoice = create(:invoice)
+      @trans_1 = @invoice.transactions.create!(credit_card_number: '1234', result: 'success', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
+      @trans_2 = @invoice.transactions.create!(credit_card_number: '2468', result: 'success', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
     end
 
     it 'can get find one transaction by search params' do
-      get "/api/v1/transactions/find?id=#{@bob.id}"
+      get "/api/v1/transactions/find?id=#{@trans_1.id}"
 
       transaction = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(transaction["id"].to_i).to eq(@bob.id)
-      expect(transaction["attributes"]["first_name"]).to eq(@bob.first_name)
-      expect(transaction["attributes"]["last_name"]).to eq(@bob.last_name)
+      expect(transaction["id"].to_i).to eq(@trans_1.id)
+      expect(transaction["attributes"]["credit_card_number"]).to eq(@trans_1.credit_card_number)
+      expect(transaction["attributes"]["result"]).to eq(@trans_1.result)
 
-      get "/api/v1/transactions/find?first_name=#{@bob.first_name}"
-
-      transaction = JSON.parse(response.body)["data"]
-
-      expect(response).to be_successful
-      expect(transaction["id"].to_i).to eq(@bob.id)
-      expect(transaction["attributes"]["first_name"]).to eq(@bob.first_name)
-      expect(transaction["attributes"]["last_name"]).to eq(@bob.last_name)
-
-      get "/api/v1/transactions/find?last_name=#{@bob.last_name}"
+      get "/api/v1/transactions/find?credit_card_number=#{@trans_1.credit_card_number}"
 
       transaction = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(transaction["id"].to_i).to eq(@bob.id)
-      expect(transaction["attributes"]["first_name"]).to eq(@bob.first_name)
-      expect(transaction["attributes"]["last_name"]).to eq(@bob.last_name)
+      expect(transaction["id"].to_i).to eq(@trans_1.id)
+      expect(transaction["attributes"]["credit_card_number"]).to eq(@trans_1.credit_card_number)
+      expect(transaction["attributes"]["result"]).to eq(@trans_1.result)
 
-      get "/api/v1/transactions/find?created_at=#{@bob.created_at}"
-
-      transaction = JSON.parse(response.body)["data"]
-
-      expect(response).to be_successful
-      expect(transaction["id"].to_i).to eq(@bob.id)
-      expect(transaction["attributes"]["first_name"]).to eq(@bob.first_name)
-      expect(transaction["attributes"]["last_name"]).to eq(@bob.last_name)
-
-      get "/api/v1/transactions/find?updated_at=#{@bob.updated_at}"
+      get "/api/v1/transactions/find?created_at=#{@trans_1.created_at}"
 
       transaction = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect(transaction["id"].to_i).to eq(@bob.id)
-      expect(transaction["attributes"]["first_name"]).to eq(@bob.first_name)
-      expect(transaction["attributes"]["last_name"]).to eq(@bob.last_name)
+      expect(transaction["id"].to_i).to eq(@trans_1.id)
+      expect(transaction["attributes"]["credit_card_number"]).to eq(@trans_1.credit_card_number)
+      expect(transaction["attributes"]["result"]).to eq(@trans_1.result)
+
+      get "/api/v1/transactions/find?updated_at=#{@trans_1.updated_at}"
+
+      transaction = JSON.parse(response.body)["data"]
+
+      expect(response).to be_successful
+      expect(transaction["id"].to_i).to eq(@trans_1.id)
+      expect(transaction["attributes"]["credit_card_number"]).to eq(@trans_1.credit_card_number)
+      expect(transaction["attributes"]["result"]).to eq(@trans_1.result)
     end
 
     it 'can get find multiple transactions by search params' do
-      get "/api/v1/transactions/find_all?name=#{@bob.created_at}"
+      get "/api/v1/transactions/find_all?name=#{@trans_1.created_at}"
 
       transactions = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
       expect(transactions.length).to eq(2)
-      expect(transactions[0]["id"].to_i).to eq(@bob.id)
-      expect(transactions[0]["attributes"]["first_name"]).to eq(@bob.first_name)
-      expect(transactions[1]["id"].to_i).to eq(@rob.id)
-      expect(transactions[1]["attributes"]["first_name"]).to eq(@rob.first_name)
+      expect(transactions[0]["id"].to_i).to eq(@trans_1.id)
+      expect(transactions[0]["attributes"]["credit_card_number"]).to eq(@trans_1.credit_card_number)
+      expect(transactions[1]["id"].to_i).to eq(@trans_2.id)
+      expect(transactions[1]["attributes"]["credit_card_number"]).to eq(@trans_2.credit_card_number)
     end
 
     it 'can get a random transaction' do
@@ -96,8 +88,8 @@ describe 'Customers API' do
       transaction = JSON.parse(response.body)["data"]
 
       expect(response).to be_successful
-      expect([@bob.id, @rob.id]).to include(transaction["id"].to_i)
-      expect([@bob.first_name, @rob.first_name]).to include(transaction["attributes"]["first_name"])
+      expect([@trans_1.id, @trans_2.id]).to include(transaction["id"].to_i)
+      expect([@trans_1.credit_card_number, @trans_2.credit_card_number]).to include(transaction["attributes"]["credit_card_number"])
     end
   end
 end
