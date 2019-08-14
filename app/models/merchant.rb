@@ -7,4 +7,9 @@ class Merchant < ApplicationRecord
     joins(:invoices)
       .where(invoices: {id: inv_id})
   end
+
+  def self.merchant_on_item(inv_id)
+    joins(:items)
+      .where(items: {id: inv_id})
+  end
 end

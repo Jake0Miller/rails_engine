@@ -29,5 +29,12 @@ RSpec.describe Merchant do
       expect(Merchant.merchant_on_invoice(invoice.id)[0].name).to eq(@josh.name)
       expect(Merchant.merchant_on_invoice(invoice.id)[0].id).to eq(@josh.id)
     end
+
+    it '.merchant_on_item' do
+      item = create(:item)
+      item.update_attributes(merchant_id: @josh.id)
+      expect(Merchant.merchant_on_item(item.id)[0].name).to eq(@josh.name)
+      expect(Merchant.merchant_on_item(item.id)[0].id).to eq(@josh.id)
+    end
   end
 end
