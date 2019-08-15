@@ -63,7 +63,7 @@ RSpec.describe Invoice, type: :model do
     it '.invoice_on_transaction' do
       transaction = create(:transaction)
       transaction.update_attributes(invoice: @invoice_1)
-      
+
       expect(Invoice.invoice_on_transaction(transaction.id)[0].id).to eq(@invoice_1.id)
     end
   end

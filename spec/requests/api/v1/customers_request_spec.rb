@@ -24,6 +24,59 @@ describe 'Customers API' do
     expect(customer["id"].to_i).to eq(id)
   end
 
+  it 'can get a list of items for the invoice' do
+    inv = create(:invoice)
+    items = create_list(:item, 3)
+    inv_items = create_list(:invoice_item, 3)
+    inv_items.each do |i_item|
+      i_item.update_attributes(invoice_id: inv.id)
+    end
+    create_list(:item, 4)
+
+    get "/api/v1/invoices/#{inv.id}/items"
+
+    expect(response).to be_successful
+
+    items = JSON.parse(response.body)["data"]
+
+    expect(items.length).to eq(3)
+    expect(Item.all.length).to eq(10)
+  end
+
+  it 'can get a list of invoices for the customer' do
+    cust_id = create(:customer).id
+    invoices = create_list(:invoice, 3)
+    invoices.each {|invoice| invoice.update_attributes(customer_id: cust_id)}
+    create(:invoice)
+
+    get "/api/v1/customers/#{cust_id}/invoices"
+
+    expect(response).to be_successful
+
+    invoices = JSON.parse(response.body)["data"]
+
+    expect(invoices.length).to eq(3)
+    expect(Invoice.all.length).to eq(4)
+  end
+
+  it 'can get a list of transactions for the customer' do
+    cust_id = create(:customer).id
+    invoice = create(:invoice)
+    invoice.update_attributes(customer_id: cust_id)
+    transactions = create_list(:transaction, 3)
+    transactions.each {|transaction| transaction.update_attributes(invoice_id: invoice.id)}
+    create(:transaction)
+
+    get "/api/v1/customers/#{cust_id}/transactions"
+
+    expect(response).to be_successful
+
+    trans = JSON.parse(response.body)["data"]
+    
+    expect(Transaction.all.length).to eq(4)
+    expect(trans.length).to eq(3)
+  end
+
   describe 'lookups' do
     before :each do
       @bob = Customer.create!(first_name: 'Bob', last_name: 'Saget', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
@@ -94,7 +147,7 @@ describe 'Customers API' do
       get "/api/v1/customers/random"
 
       customer = JSON.parse(response.body)["data"]
-      
+
       expect(response).to be_successful
       expect([@bob.id, @rob.id]).to include(customer["id"].to_i)
       expect([@bob.first_name, @rob.first_name]).to include(customer["attributes"]["first_name"])
