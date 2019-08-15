@@ -21,7 +21,7 @@ RSpec.describe Item, type: :model do
       @item_2 = @merchant.items.create!(name: 'Apple', description: 'Red', unit_price: '150')
       @item_3 = @merchant.items.create!(name: 'Orange', description: 'Orange', unit_price: '160')
       @item_4 = @merchant.items.create!(name: 'Kiwi', description: 'Green', unit_price: '200')
-      @item_5 = @merchant.items.create!(name: 'Avocado', description: 'Lumpy', unit_price: '400')
+      @item_5 = @merchant.items.create!(name: 'Avocado', description: 'Lumpy', unit_price: '450')
       @invoice_1 = Invoice.create!(status: 'shipped', merchant: @merchant, customer: @customer, created_at: "2012-03-25 09:54:09 UTC")
       @invoice_2 = Invoice.create!(status: 'shipped', merchant: @merchant, customer: @customer, created_at: "2012-03-12 05:54:09 UTC")
       @invoice_item_1 = InvoiceItem.create!(item: @item_1, invoice: @invoice_1, quantity: 5, unit_price: @item_1.unit_price)
@@ -39,6 +39,15 @@ RSpec.describe Item, type: :model do
       expect(top_items[0].name).to eq(@item_4.name)
       expect(top_items[1].name).to eq(@item_1.name)
       expect(top_items[2].name).to eq(@item_5.name)
+    end
+
+    it '.most_revenue' do
+      top_items = Item.most_revenue(3)
+
+      expect(top_items.length).to eq(3)
+      expect(top_items[0].name).to eq(@item_5.name)
+      expect(top_items[1].name).to eq(@item_4.name)
+      expect(top_items[2].name).to eq(@item_1.name)
     end
 
     it '.date_of_highest_sales' do
