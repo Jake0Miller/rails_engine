@@ -8,12 +8,20 @@ class Item < ApplicationRecord
 
   scope(:order_by_id, -> { order(id: :asc) })
 
-  def self.most_sold(num)
+  def self.most_sold(limit)
     joins(:invoice_items)
         .select('items.*, sum(invoice_items.quantity) AS qty')
         .group('items.id')
         .order('qty DESC')
-        .limit(num)
+        .limit(limit)
+  end
+
+  def self.most_revenue(limit)
+    joins(:invoice_items)
+        .select('items.*, sum(invoice_items.quantity * invoice_items.unit_price::float) AS total')
+        .group('items.id')
+        .order('total DESC')
+        .limit(limit)
   end
 
   def self.date_of_highset_sales(item_id)
