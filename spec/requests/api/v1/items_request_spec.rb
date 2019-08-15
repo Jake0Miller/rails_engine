@@ -71,7 +71,7 @@ describe 'Items API' do
       expect(response).to be_successful
       expect(item["id"].to_i).to eq(monkey.id)
       expect(item["attributes"]["name"]).to eq(monkey.name)
-      expect(item["attributes"]["unit_price"]).to eq(monkey.unit_price)
+      expect(item["attributes"]["unit_price"]).to eq(monkey.unit_price.to_s)
 
       get "/api/v1/items/find?name=#{monkey.name}"
 
