@@ -22,6 +22,23 @@ class Merchant < ApplicationRecord
       .order(total: :desc)
       .limit(1)
   end
+
+  def self.most_sold(limit)
+    joins(invoices: [:transactions, :invoice_items])
+      .select('merchants.*, sum(invoice_items.quantity) AS qty')
+      .group(:id)
+      .merge(Transaction.successful)
+      .order(qty: :DESC)
+      .limit(limit)
+  end
+
+  def self.most_revenue(limit)
+    joins(:invoice_items)
+        .select('items.*, sum(invoice_items.quantity * invoice_items.unit_price) AS total')
+        .group('items.id')
+        .order('total DESC')
+        .limit(limit)
+  end
 end
 
 # "2012-03-27".to_date.all_day
