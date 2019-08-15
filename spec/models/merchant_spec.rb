@@ -36,5 +36,41 @@ RSpec.describe Merchant do
       expect(Merchant.merchant_on_item(item.id)[0].name).to eq(@josh.name)
       expect(Merchant.merchant_on_item(item.id)[0].id).to eq(@josh.id)
     end
+
+    it '.fav_for_customer' do
+      customer = create(:customer)
+      merchant_1 = create(:merchant)
+      merchant_2 = create(:merchant)
+      merchant_3 = create(:merchant)
+      merchant_4 = create(:merchant)
+      item_1 = merchant_1.items.create!(name: 'Banana', description: 'Yellow', unit_price: '100')
+      item_2 = merchant_2.items.create!(name: 'Apple', description: 'Red', unit_price: '150')
+      item_3 = merchant_3.items.create!(name: 'Orange', description: 'Orange', unit_price: '160')
+      item_4 = merchant_4.items.create!(name: 'Kiwi', description: 'Green', unit_price: '200')
+      invoice_1 = create(:invoice)
+      invoice_1.update_attributes(merchant: merchant_1)
+      invoice_1.update_attributes(customer: customer)
+      invoice_2 = create(:invoice)
+      invoice_2.update_attributes(merchant: merchant_2)
+      invoice_2.update_attributes(customer: customer)
+      invoice_3 = create(:invoice)
+      invoice_3.update_attributes(merchant: merchant_3)
+      invoice_3.update_attributes(customer: customer)
+      invoice_4 = create(:invoice)
+      invoice_4.update_attributes(merchant: merchant_4)
+      invoice_4.update_attributes(customer: customer)
+      transaction_1 = create(:transaction)
+      transaction_1.update_attributes(invoice: invoice_1)
+      transaction_2 = create(:transaction)
+      transaction_2.update_attributes(invoice: invoice_2)
+      transaction_3 = create(:transaction)
+      transaction_3.update_attributes(invoice: invoice_3)
+      transaction_4 = create(:transaction)
+      transaction_4.update_attributes(invoice: invoice_3)
+      transaction_5 = create(:transaction)
+      transaction_5.update_attributes(invoice: invoice_4)
+
+      expect(Merchant.fav_for_customer(customer.id)[0].id).to eq(merchant_3.id)
+    end
   end
 end
