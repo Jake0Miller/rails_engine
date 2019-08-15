@@ -160,5 +160,17 @@ describe 'Merchants API' do
       expect(merchant[1]["id"].to_i).to eq(@merchant_3.id)
       expect(merchant[2]["id"].to_i).to eq(@merchant_2.id)
     end
+
+    it 'can get the top x merchants by total revenue sold' do
+      get "/api/v1/merchants/most_revenue?quantity=3"
+
+      merchant = JSON.parse(response.body)["data"]
+
+      expect(response).to be_successful
+      expect(merchant.length).to eq(3)
+      expect(merchant[0]["id"].to_i).to eq(@merchant_1.id)
+      expect(merchant[1]["id"].to_i).to eq(@merchant_3.id)
+      expect(merchant[2]["id"].to_i).to eq(@merchant_2.id)
+    end
   end
 end
