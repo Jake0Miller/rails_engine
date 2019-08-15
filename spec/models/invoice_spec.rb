@@ -51,8 +51,8 @@ RSpec.describe Invoice, type: :model do
       expect(top_5.length).to eq(5)
       expect(top_5[0]).to eq(@invoice_7)
       expect(top_5[1]).to eq(@invoice_6)
-      expect(top_5[2]).to eq(@invoice_4)
-      expect(top_5[3]).to eq(@invoice_5)
+      expect([top_5[2],top_5[3]]).to include(@invoice_4)
+      expect([top_5[2],top_5[3]]).to include(@invoice_5)
       expect(top_5[4]).to eq(@invoice_3)
     end
 
