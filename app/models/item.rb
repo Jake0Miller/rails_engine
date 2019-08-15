@@ -4,8 +4,6 @@ class Item < ApplicationRecord
   has_many :invoices, through: :invoice_items
   validates_presence_of :name, :description, :unit_price
 
-  before_save :convert_price_string
-
   scope(:order_by_id, -> { order(id: :asc) })
 
   def self.most_sold(limit)
@@ -18,7 +16,7 @@ class Item < ApplicationRecord
 
   def self.most_revenue(limit)
     joins(:invoice_items)
-        .select('items.*, sum(invoice_items.quantity * invoice_items.unit_price::float) AS total')
+        .select('items.*, sum(invoice_items.quantity * invoice_items.unit_price) AS total')
         .group('items.id')
         .order('total DESC')
         .limit(limit)
@@ -43,11 +41,5 @@ class Item < ApplicationRecord
   def self.item_on_invoice_item(inv_id)
     joins(:invoice_items)
       .where(invoice_items: {id: inv_id})
-  end
-
-  private
-
-  def convert_price_string
-    self.unit_price = (self.unit_price.to_f/100).to_s
   end
 end
