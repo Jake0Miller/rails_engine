@@ -41,5 +41,3 @@ class Merchant < ApplicationRecord
       .limit(limit)
   end
 end
-
-# "2012-03-27".to_date.all_day

@@ -25,4 +25,11 @@ class Invoice < ApplicationRecord
     joins(:transactions)
       .where(transactions: {id: inv_id})
   end
+
+  def self.total_revenue_by_date(date)
+    test = joins(:transactions, :invoice_items)
+      .merge(Transaction.successful)
+      .select('sum(invoice_items.quantity * invoice_items.unit_price) AS revenue')
+      .where(created_at: "2012-03-25".to_date.all_day)
+  end
 end
