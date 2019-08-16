@@ -126,7 +126,9 @@ describe 'Merchants API' do
 
   describe 'business intel' do
     before :each do
+      create(:customer)
       @customer = create(:customer)
+      create(:customer)
       @merchant_1 = create(:merchant)
       @invoice_1 = Invoice.create!(status: 'shipped', merchant: @merchant_1, customer: @customer, created_at: "2012-03-25 09:54:09 UTC")
       @item_1 = @merchant_1.items.create!(name: 'Banana', description: 'Yellow', unit_price: 100)
@@ -198,6 +200,15 @@ describe 'Merchants API' do
 
       expect(response).to be_successful
       expect(revenue["attributes"]["revenue"]).to eq("300.00")
+    end
+
+    it 'can get the favorite customer for a merchant' do
+      get "/api/v1/merchants/#{@merchant_3.id}/favorite_customer"
+
+      customer = JSON.parse(response.body)["data"]
+
+      expect(response).to be_successful
+      expect(customer["id"].to_i).to eq(@customer.id)
     end
   end
 end

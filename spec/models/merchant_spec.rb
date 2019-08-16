@@ -133,6 +133,12 @@ RSpec.describe Merchant do
 
         expect(revenue[0].revenue).to eq(50000)
       end
+
+      it 'can get the favorite customer for a merchant' do
+        customer = Customer.favorite_customer(@merchant_1.id)
+
+        expect(customer[0].id).to eq(@customer.id)
+      end
     end
   end
 end
