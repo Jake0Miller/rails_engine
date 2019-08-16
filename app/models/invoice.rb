@@ -32,4 +32,18 @@ class Invoice < ApplicationRecord
       .where(created_at: date.to_date.all_day)
       .merge(Transaction.successful)
   end
+
+  def self.total_revenue(merch_id)
+    joins(:transactions, :invoice_items, :merchant)
+      .select('sum(invoice_items.quantity * invoice_items.unit_price) AS revenue')
+      .where(merchant_id: merch_id)
+      .merge(Transaction.successful)
+  end
+
+  def self.total_revenue_by_merch_and_date(merch_id, date)
+    joins(:transactions, :invoice_items)
+      .select('sum(invoice_items.quantity * invoice_items.unit_price) AS revenue')
+      .where(created_at: date.to_date.all_day, merchant_id: merch_id)
+      .merge(Transaction.successful)
+  end
 end

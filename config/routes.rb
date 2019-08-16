@@ -48,6 +48,7 @@ Rails.application.routes.draw do
         get '/most_items/', to: 'most_items#index'
         get '/most_revenue/', to: 'most_revenue#index'
         get '/revenue', to: 'revenue#show'
+        get '/:id/revenue', to: 'total_revenue#show'
         get '/:id/invoices', to: 'invoices#index'
         get '/:id/items', to: 'items#index'
       end

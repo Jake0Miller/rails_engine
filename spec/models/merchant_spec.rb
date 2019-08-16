@@ -121,6 +121,18 @@ RSpec.describe Merchant do
 
         expect(revenue[0].revenue).to eq(93000)
       end
+
+      it 'can get the total revenue for a merchant' do
+        revenue = Invoice.total_revenue(@merchant_1.id)
+
+        expect(revenue[0].revenue).to eq(50000)
+      end
+
+      it 'can get the total revenue for a merchant on a specific date' do
+        revenue = Invoice.total_revenue_by_merch_and_date(@merchant_1.id, "2012-03-25")
+
+        expect(revenue[0].revenue).to eq(50000)
+      end
     end
   end
 end

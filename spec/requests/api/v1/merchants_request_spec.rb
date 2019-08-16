@@ -177,9 +177,27 @@ describe 'Merchants API' do
       get "/api/v1/merchants/revenue?date=2012-03-25"
 
       revenue = JSON.parse(response.body)["data"]
-      
+
       expect(response).to be_successful
       expect(revenue["attributes"]["total_revenue"]).to eq("930.00")
+    end
+
+    it 'can get the total revenue for a merchant' do
+      get "/api/v1/merchants/#{@merchant_3.id}/revenue"
+
+      revenue = JSON.parse(response.body)["data"]
+
+      expect(response).to be_successful
+      expect(revenue["attributes"]["revenue"]).to eq("300.00")
+    end
+
+    it 'can get the total revenue for a merchant on a date' do
+      get "/api/v1/merchants/#{@merchant_3.id}/revenue?date=2012-03-25"
+
+      revenue = JSON.parse(response.body)["data"]
+
+      expect(response).to be_successful
+      expect(revenue["attributes"]["revenue"]).to eq("300.00")
     end
   end
 end
