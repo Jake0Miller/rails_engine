@@ -71,7 +71,7 @@ describe 'Items API' do
       expect(response).to be_successful
       expect(item["id"].to_i).to eq(monkey.id)
       expect(item["attributes"]["name"]).to eq(monkey.name)
-      expect(item["attributes"]["unit_price"]).to eq(monkey.unit_price.to_s)
+      expect(item["attributes"]["unit_price"]).to eq(sprintf('%.2f', monkey.unit_price.to_f/100))
 
       get "/api/v1/items/find?name=#{monkey.name}"
 
@@ -89,7 +89,7 @@ describe 'Items API' do
       expect(item["id"].to_i).to eq(monkey.id)
       expect(item["attributes"]["name"]).to eq(monkey.name)
 
-      get "/api/v1/items/find?unit_price=#{monkey.unit_price}"
+      get "/api/v1/items/find?unit_price=#{sprintf('%.2f', monkey.unit_price.to_f/100)}"
 
       item = JSON.parse(response.body)["data"]
 

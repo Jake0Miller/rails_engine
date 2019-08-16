@@ -1,6 +1,6 @@
 class RevenueSerializer
   include FastJsonapi::ObjectSerializer
   attribute :total_revenue do |obj|
-    obj.revenue.to_s
+    sprintf('%.2f', obj.revenue.to_f/100)
   end
 end

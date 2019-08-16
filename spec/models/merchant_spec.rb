@@ -117,12 +117,9 @@ RSpec.describe Merchant do
       end
 
       it 'can get the total revenue on a specific date' do
-        merchant = Merchant.most_revenue(3)
+        revenue = Invoice.total_revenue_by_date("2012-03-25")
 
-        expect(merchant.length).to eq(3)
-        expect(merchant[0]["id"].to_i).to eq(@merchant_1.id)
-        expect(merchant[1]["id"].to_i).to eq(@merchant_3.id)
-        expect(merchant[2]["id"].to_i).to eq(@merchant_2.id)
+        expect(revenue[0].revenue).to eq(93000)
       end
     end
   end
