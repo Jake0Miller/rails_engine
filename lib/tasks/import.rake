@@ -49,11 +49,4 @@ task :import => [:environment] do
   end
   Transaction.import!(transactions)
   p "Transactions imported"
-
-  # invoices = Invoice.preload(:successful_transactions).where(successful_transactions: {})
-  # invoices.update_all(status: "pending")
-
-  # Invoice.preload(:successful_transactions).each do |invoice|
-  #   invoice.update_attributes(status: "pending") if invoice.successful_transactions.empty?
-  # end
 end
