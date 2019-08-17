@@ -72,5 +72,86 @@ RSpec.describe Merchant do
 
       expect(Merchant.fav_for_customer(customer.id)[0].id).to eq(merchant_3.id)
     end
+
+    describe 'top merchants' do
+      before :each do
+        @customer = create(:customer)
+        @merchant_1 = create(:merchant)
+        @invoice_1 = Invoice.create!(status: 'shipped', merchant: @merchant_1, customer: @customer, created_at: "2012-03-25 09:54:09 UTC")
+        @item_1 = @merchant_1.items.create!(name: 'Banana', description: 'Yellow', unit_price: '100')
+        @invoice_1.invoice_items.create!(item: @item_1, quantity: 500, unit_price: @item_1.unit_price)
+        @invoice_1.transactions.create!(credit_card_number: '2468', result: 'success', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
+        @merchant_2 = create(:merchant)
+        @invoice_2 = Invoice.create!(status: 'shipped', merchant: @merchant_2, customer: @customer, created_at: "2012-03-25 09:54:09 UTC")
+        @item_2 = @merchant_2.items.create!(name: 'Banana', description: 'Yellow', unit_price: '100')
+        @invoice_2.invoice_items.create!(item: @item_2, quantity: 100, unit_price: @item_2.unit_price)
+        @invoice_2.transactions.create!(credit_card_number: '2468', result: 'success', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
+        @merchant_3 = create(:merchant)
+        @invoice_3 = Invoice.create!(status: 'shipped', merchant: @merchant_3, customer: @customer, created_at: "2012-03-25 09:54:09 UTC")
+        @item_3 = @merchant_3.items.create!(name: 'Banana', description: 'Yellow', unit_price: '100')
+        @invoice_3.invoice_items.create!(item: @item_3, quantity: 300, unit_price: @item_3.unit_price)
+        @invoice_3.transactions.create!(credit_card_number: '2468', result: 'success', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
+        @merchant_4 = create(:merchant)
+        @invoice_4 = Invoice.create!(status: 'shipped', merchant: @merchant_4, customer: @customer, created_at: "2012-03-25 09:54:09 UTC")
+        @item_4 = @merchant_4.items.create!(name: 'Banana', description: 'Yellow', unit_price: '100')
+        @invoice_4.invoice_items.create!(item: @item_4, quantity: 30, unit_price: @item_4.unit_price)
+        @invoice_4.transactions.create!(credit_card_number: '2468', result: 'success', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
+      end
+
+      it 'can get the top x merchants by number of items sold' do
+        merchant = Merchant.most_sold(3)
+
+        expect(merchant.length).to eq(3)
+        expect(merchant[0]["id"].to_i).to eq(@merchant_1.id)
+        expect(merchant[1]["id"].to_i).to eq(@merchant_3.id)
+        expect(merchant[2]["id"].to_i).to eq(@merchant_2.id)
+      end
+
+      it 'can get the top x merchants by total revenue' do
+        merchant = Merchant.most_revenue(3)
+
+        expect(merchant.length).to eq(3)
+        expect(merchant[0]["id"].to_i).to eq(@merchant_1.id)
+        expect(merchant[1]["id"].to_i).to eq(@merchant_3.id)
+        expect(merchant[2]["id"].to_i).to eq(@merchant_2.id)
+      end
+
+      it 'can get the total revenue on a specific date' do
+        revenue = Invoice.total_revenue_by_date("2012-03-25")
+
+        expect(revenue[0].revenue).to eq(93000)
+      end
+
+      it 'can get the total revenue for a merchant' do
+        revenue = Invoice.total_revenue(@merchant_1.id)
+
+        expect(revenue[0].revenue).to eq(50000)
+      end
+
+      it 'can get the total revenue for a merchant on a specific date' do
+        revenue = Invoice.total_revenue_by_merch_and_date(@merchant_1.id, "2012-03-25")
+
+        expect(revenue[0].revenue).to eq(50000)
+      end
+
+      it 'can get the favorite customer for a merchant' do
+        customer = Customer.favorite_customer(@merchant_1.id)
+
+        expect(customer[0].id).to eq(@customer.id)
+      end
+
+      it 'can get customers with pending orders for a merchant' do
+        merchant_5 = create(:merchant)
+        invoice_5 = Invoice.create!(status: 'shipped', merchant: merchant_5, customer: @customer, created_at: "2012-03-25 09:54:09 UTC")
+        item_5 = merchant_5.items.create!(name: 'Banana', description: 'Yellow', unit_price: 100)
+        invoice_5.invoice_items.create!(item: item_5, quantity: 30, unit_price: item_5.unit_price)
+        invoice_5.transactions.create!(credit_card_number: '2468', result: 'failed', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
+
+        customers = Customer.pending_invoices(merchant_5.id)
+
+        expect(customers.length).to eq(1)
+        expect(customers[0]["id"].to_i).to eq(@customer.id)
+      end
+    end
   end
 end

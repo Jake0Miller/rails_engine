@@ -3,6 +3,6 @@ class ItemSerializer
   attributes :id, :name, :description, :merchant_id
 
   attribute :unit_price do |obj|
-    obj.unit_price.to_s
+    sprintf('%.2f', obj.unit_price.to_f/100)
   end
 end

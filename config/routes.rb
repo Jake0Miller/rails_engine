@@ -45,7 +45,13 @@ Rails.application.routes.draw do
         get '/find', to: 'search#show'
         get '/find_all', to: 'search#index'
         get '/random', to: 'random#show'
+        get '/most_items/', to: 'most_items#index'
+        get '/most_revenue/', to: 'most_revenue#index'
+        get '/revenue', to: 'revenue#show'
+        get '/:id/customers_with_pending_invoices/', to: 'customer_orders#index'
+        get '/:id/favorite_customer', to: 'favorite_customer#show'
         get '/:id/invoices', to: 'invoices#index'
+        get '/:id/revenue', to: 'total_revenue#show'
         get '/:id/items', to: 'items#index'
       end
 

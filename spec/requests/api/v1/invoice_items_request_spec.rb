@@ -78,7 +78,7 @@ describe 'Invoice_items API' do
       expect(response).to be_successful
       expect(invoice_item["id"].to_i).to eq(@invoice_item_2.id)
 
-      get "/api/v1/invoice_items/find?unit_price=#{@invoice_item_2.unit_price}"
+      get "/api/v1/invoice_items/find?unit_price=#{sprintf('%.2f', @invoice_item_2.unit_price.to_f/100)}"
 
       invoice_item = JSON.parse(response.body)["data"]
 

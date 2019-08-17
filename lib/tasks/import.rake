@@ -31,7 +31,6 @@ task :import => [:environment] do
 
   items = []
   CSV.foreach(item_file, :headers => true) do |row|
-    row["unit_price"] = (row["unit_price"].to_f/100).round(2)
     items << row.to_hash
   end
   Item.import!(items)
@@ -39,7 +38,6 @@ task :import => [:environment] do
 
   invoice_items = []
   CSV.foreach(invoice_item_file, :headers => true) do |row|
-    row["unit_price"] = (row["unit_price"].to_f/100).round(2)
     invoice_items << row.to_hash
   end
   InvoiceItem.import!(invoice_items)
@@ -51,4 +49,11 @@ task :import => [:environment] do
   end
   Transaction.import!(transactions)
   p "Transactions imported"
+
+  # invoices = Invoice.preload(:successful_transactions).where(successful_transactions: {})
+  # invoices.update_all(status: "pending")
+
+  # Invoice.preload(:successful_transactions).each do |invoice|
+  #   invoice.update_attributes(status: "pending") if invoice.successful_transactions.empty?
+  # end
 end

@@ -123,4 +123,108 @@ describe 'Merchants API' do
       expect([josh.name, alex.name]).to include(merchant["attributes"]["name"])
     end
   end
+
+  describe 'business intel' do
+    before :each do
+      create(:customer)
+      @customer = create(:customer)
+      create(:customer)
+      @merchant_1 = create(:merchant)
+      @invoice_1 = Invoice.create!(status: 'shipped', merchant: @merchant_1, customer: @customer, created_at: "2012-03-25 09:54:09 UTC")
+      @item_1 = @merchant_1.items.create!(name: 'Banana', description: 'Yellow', unit_price: 100)
+      @invoice_1.invoice_items.create!(item: @item_1, quantity: 500, unit_price: @item_1.unit_price)
+      @invoice_1.transactions.create!(credit_card_number: '2468', result: 'success', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
+      @merchant_2 = create(:merchant)
+      @invoice_2 = Invoice.create!(status: 'shipped', merchant: @merchant_2, customer: @customer, created_at: "2012-03-25 09:54:09 UTC")
+      @item_2 = @merchant_2.items.create!(name: 'Banana', description: 'Yellow', unit_price: 100)
+      @invoice_2.invoice_items.create!(item: @item_2, quantity: 100, unit_price: @item_2.unit_price)
+      @invoice_2.transactions.create!(credit_card_number: '2468', result: 'success', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
+      @merchant_3 = create(:merchant)
+      @invoice_3 = Invoice.create!(status: 'shipped', merchant: @merchant_3, customer: @customer, created_at: "2012-03-25 09:54:09 UTC")
+      @item_3 = @merchant_3.items.create!(name: 'Banana', description: 'Yellow', unit_price: 100)
+      @invoice_3.invoice_items.create!(item: @item_3, quantity: 300, unit_price: @item_3.unit_price)
+      @invoice_3.transactions.create!(credit_card_number: '2468', result: 'success', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
+      @merchant_4 = create(:merchant)
+      @invoice_4 = Invoice.create!(status: 'shipped', merchant: @merchant_4, customer: @customer, created_at: "2012-03-25 09:54:09 UTC")
+      @item_4 = @merchant_4.items.create!(name: 'Banana', description: 'Yellow', unit_price: 100)
+      @invoice_4.invoice_items.create!(item: @item_4, quantity: 30, unit_price: @item_4.unit_price)
+      @invoice_4.transactions.create!(credit_card_number: '2468', result: 'success', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
+    end
+
+    it 'can get the top x merchants by number of items sold' do
+      get "/api/v1/merchants/most_items?quantity=3"
+
+      merchant = JSON.parse(response.body)["data"]
+
+      expect(response).to be_successful
+      expect(merchant.length).to eq(3)
+      expect(merchant[0]["id"].to_i).to eq(@merchant_1.id)
+      expect(merchant[1]["id"].to_i).to eq(@merchant_3.id)
+      expect(merchant[2]["id"].to_i).to eq(@merchant_2.id)
+    end
+
+    it 'can get the top x merchants by total revenue' do
+      get "/api/v1/merchants/most_revenue?quantity=3"
+
+      merchant = JSON.parse(response.body)["data"]
+
+      expect(response).to be_successful
+      expect(merchant.length).to eq(3)
+      expect(merchant[0]["id"].to_i).to eq(@merchant_1.id)
+      expect(merchant[1]["id"].to_i).to eq(@merchant_3.id)
+      expect(merchant[2]["id"].to_i).to eq(@merchant_2.id)
+    end
+
+    it 'can get the total revenue for date x' do
+      get "/api/v1/merchants/revenue?date=2012-03-25"
+
+      revenue = JSON.parse(response.body)["data"]
+
+      expect(response).to be_successful
+      expect(revenue["attributes"]["total_revenue"]).to eq("930.00")
+    end
+
+    it 'can get the total revenue for a merchant' do
+      get "/api/v1/merchants/#{@merchant_3.id}/revenue"
+
+      revenue = JSON.parse(response.body)["data"]
+
+      expect(response).to be_successful
+      expect(revenue["attributes"]["revenue"]).to eq("300.00")
+    end
+
+    it 'can get the total revenue for a merchant on a date' do
+      get "/api/v1/merchants/#{@merchant_3.id}/revenue?date=2012-03-25"
+
+      revenue = JSON.parse(response.body)["data"]
+
+      expect(response).to be_successful
+      expect(revenue["attributes"]["revenue"]).to eq("300.00")
+    end
+
+    it 'can get the favorite customer for a merchant' do
+      get "/api/v1/merchants/#{@merchant_3.id}/favorite_customer"
+
+      customer = JSON.parse(response.body)["data"]
+
+      expect(response).to be_successful
+      expect(customer["id"].to_i).to eq(@customer.id)
+    end
+
+    it 'can get customers with pending orders for a merchant' do
+      merchant_5 = create(:merchant)
+      invoice_5 = Invoice.create!(status: 'shipped', merchant: merchant_5, customer: @customer, created_at: "2012-03-25 09:54:09 UTC")
+      item_5 = merchant_5.items.create!(name: 'Banana', description: 'Yellow', unit_price: 100)
+      invoice_5.invoice_items.create!(item: item_5, quantity: 30, unit_price: item_5.unit_price)
+      invoice_5.transactions.create!(credit_card_number: '2468', result: 'failed', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
+
+      get "/api/v1/merchants/#{merchant_5.id}/customers_with_pending_invoices"
+
+      customers = JSON.parse(response.body)["data"]
+
+      expect(response).to be_successful
+      expect(customers.length).to eq(1)
+      expect(customers[0]["id"].to_i).to eq(@customer.id)
+    end
+  end
 end

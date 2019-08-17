@@ -4,6 +4,7 @@ class Invoice < ApplicationRecord
   belongs_to :merchant
   belongs_to :customer
   has_many :items, through: :invoice_items
+  # has_many :successful_transactions, -> {where(result: 'success')}, class_name: "Transaction"
 
   validates_presence_of :status
 
@@ -24,5 +25,26 @@ class Invoice < ApplicationRecord
   def self.invoice_on_transaction(inv_id)
     joins(:transactions)
       .where(transactions: {id: inv_id})
+  end
+
+  def self.total_revenue_by_date(date)
+    joins(:transactions, :invoice_items)
+      .select('sum(invoice_items.quantity * invoice_items.unit_price) AS revenue')
+      .where(created_at: date.to_date.all_day)
+      .merge(Transaction.successful)
+  end
+
+  def self.total_revenue(merch_id)
+    joins(:transactions, :invoice_items, :merchant)
+      .select('sum(invoice_items.quantity * invoice_items.unit_price) AS revenue')
+      .where(merchant_id: merch_id)
+      .merge(Transaction.successful)
+  end
+
+  def self.total_revenue_by_merch_and_date(merch_id, date)
+    joins(:transactions, :invoice_items)
+      .select('sum(invoice_items.quantity * invoice_items.unit_price) AS revenue')
+      .where(created_at: date.to_date.all_day, merchant_id: merch_id)
+      .merge(Transaction.successful)
   end
 end

@@ -5,7 +5,7 @@ class Api::V1::Items::ItemSalesController < ApplicationController
   end
 
   def index
-    item = Item.most_sold(params[:quantity])
-    render json: ItemSerializer.new(item)
+    items = Item.most_sold(params[:quantity])
+    render json: ItemSerializer.new(items)
   end
 end
