@@ -210,5 +210,21 @@ describe 'Merchants API' do
       expect(response).to be_successful
       expect(customer["id"].to_i).to eq(@customer.id)
     end
+
+    it 'can get customers with pending orders for a merchant' do
+      merchant_5 = create(:merchant)
+      invoice_5 = Invoice.create!(status: 'shipped', merchant: merchant_5, customer: @customer, created_at: "2012-03-25 09:54:09 UTC")
+      item_5 = merchant_5.items.create!(name: 'Banana', description: 'Yellow', unit_price: 100)
+      invoice_5.invoice_items.create!(item: item_5, quantity: 30, unit_price: item_5.unit_price)
+      invoice_5.transactions.create!(credit_card_number: '2468', result: 'failed', created_at: "2012-03-25 09:54:09 UTC", updated_at: "2012-03-25 09:54:09 UTC")
+
+      get "/api/v1/merchants/#{merchant_5.id}/customers_with_pending_invoices"
+
+      customers = JSON.parse(response.body)["data"]
+
+      expect(response).to be_successful
+      expect(customers.length).to eq(1)
+      expect(customers[0]["id"].to_i).to eq(@customer.id)
+    end
   end
 end

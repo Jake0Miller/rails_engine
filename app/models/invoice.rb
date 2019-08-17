@@ -4,6 +4,7 @@ class Invoice < ApplicationRecord
   belongs_to :merchant
   belongs_to :customer
   has_many :items, through: :invoice_items
+  # has_many :successful_transactions, -> {where(result: 'success')}, class_name: "Transaction"
 
   validates_presence_of :status
 
