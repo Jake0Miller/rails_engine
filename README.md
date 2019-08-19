@@ -18,7 +18,7 @@
 
 * Run spec harness
 
-## Record Endpoints
+## Endpoints
 
 We have six record types: Merchants, Items, Invoices, Invoice Items, Transactions, and Customers.
 
