@@ -29,7 +29,6 @@ class Customer < ApplicationRecord
             .where(transactions: {id: nil})
             .pluck(:id)
 
-    ids = pending + empty
-    Customer.where(id: ids)
+    Customer.where(id: pending + empty)
   end
 end
